@@ -1,7 +1,7 @@
-__pycache__/
-.ipynb_checkpoints/
-
-data/
-models/
-
 .venv
+.idea
+.env
+
+kaggle_data
+dataset
+config/kaggle.json
