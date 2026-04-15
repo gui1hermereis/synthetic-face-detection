@@ -1,7 +1,7 @@
+.ipynb_checkpoints
 .venv
 .idea
 .env
 
-kaggle_data
 dataset
-config/kaggle.json
+modelos
