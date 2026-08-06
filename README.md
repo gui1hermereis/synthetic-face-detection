@@ -1,49 +1,93 @@
 # Synthetic Face Detection
 
-Projeto de Trabalho de Conclusão de Curso (TCC) para classificação de imagens faciais reais e sintéticas utilizando técnicas de aprendizado profundo.
+Projeto dividido em tres modulos principais para treinamento, produto web e inferencia via API.
 
-O objetivo é desenvolver um modelo capaz de identificar se uma imagem facial foi gerada artificialmente por modelos generativos de inteligência artificial ou capturada de uma pessoa real.
+## Visao geral
 
----
+O objetivo do projeto e classificar imagens faciais como reais ou sinteticas. A estrutura foi separada para que cada parte tenha responsabilidade clara:
 
-## Objetivo
+- `training/`: desenvolvimento, experimentacao e treinamento do modelo
+- `api/`: servico Flask responsavel por validar a imagem e executar a inferencia
+- `app/`: interface web em React para envio da imagem e visualizacao do resultado
 
-Com o avanço dos modelos generativos de imagens, como GANs e modelos de difusão, tornou-se cada vez mais difícil distinguir imagens reais de imagens sintéticas.
+## Estrutura principal
 
-Este projeto busca avaliar técnicas de visão computacional para classificação binária:
+```text
+synthetic-face-detection/
+  api/
+  app/
+  training/
+  README.md
+```
 
-- **Classe 0:** Imagem real
-- **Classe 1:** Imagem sintética gerada por IA
+## Modulo `training`
 
----
+Responsavel pelo ciclo de pesquisa e evolucao do modelo.
 
-# Dataset
+Contem:
 
-O dataset utilizado contém **16.000 imagens faciais** balanceadas:
+- `notebooks/`: exploracao e experimentos
+- `scripts/`: utilitarios de treino e dados
+- `src/`: codigo Python reutilizavel do pipeline de treinamento
+- `models/`: pesos `.pth` gerados no treinamento
+- `outputs/`: metricas, graficos, logs e artefatos de avaliacao
+- `requirements.txt`: dependencias do ambiente de treino
+- `.gitignore`: regras locais para pesos, outputs e caches
 
-| Classe | Quantidade |
-|---|---:|
-| Reais | 8.000 |
-| Sintéticas | 8.000 |
+Ponto importante:
 
-Todas as imagens possuem:
+- o modelo final usado em producao deve ser copiado para `api/models/`
 
-- Resolução: 1024x1024 pixels
-- Formato: JPEG
-- Espaço de cor: RGB
+## Modulo `api`
 
-## Imagens sintéticas
+Responsavel por expor a inferencia do modelo em uma API Flask.
 
-| Modelo | Quantidade |
-|---|---:|
-| StyleGAN2 | 2.000 |
-| StyleGAN3 | 2.000 |
-| Stable Diffusion 1.4 | 2.000 |
-| Stable Diffusion 2.1 | 2.000 |
+Contem:
 
-## Imagens reais
+- autenticacao por `X-API-Key`
+- validacao da imagem recebida
+- deteccao de rosto unico
+- checagem de qualidade da imagem
+- preprocessamento compativel com o treinamento
+- inferencia com o modelo salvo em `api/models/`
+- testes automatizados da API
 
-| Dataset | Quantidade |
-|---|---:|
-| FFHQ | 6.000 |
-| CelebA-HQ | 2.000 |
+Arquivos principais:
+
+- `api/README.md`
+- `api/requirements.txt`
+- `api/.env`
+- `api/models/`
+- `api/src/`
+- `api/tests/`
+
+## Modulo `app`
+
+Responsavel pela interface web do projeto.
+
+Contem:
+
+- upload da imagem
+- leitura de `VITE_API_KEY` e `VITE_API_BASE_URL` por `.env`
+- envio autenticado para a API
+- exibicao da classificacao, confianca e probabilidades
+
+Arquivos principais:
+
+- `app/README.md`
+- `app/package.json`
+- `app/.env.example`
+- `app/src/`
+
+## Fluxo geral
+
+1. o modelo e treinado em `training/`
+2. o peso final `.pth` e colocado em `api/models/`
+3. a API carrega esse modelo e expoe a inferencia
+4. o frontend envia a imagem para a API e mostra o resultado ao usuario
+
+## Onde configurar cada parte
+
+- treino: `training/requirements.txt`
+- API: `api/.env` e `api/requirements.txt`
+- frontend: `app/.env` e `app/package.json`
