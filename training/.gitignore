@@ -9,3 +9,4 @@ models/*.pth
 *.log
 *.tmp
 .DS_Store
+dataset
