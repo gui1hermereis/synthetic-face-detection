@@ -12,13 +12,18 @@ class ImageQualityMetrics:
     is_blurry: bool
     has_low_contrast: bool
 
+
 class ImageQualityInspector:
     def __init__(self, config):
         self._blur_threshold = config["BLUR_THRESHOLD"]
         self._contrast_threshold = config["CONTRAST_THRESHOLD"]
 
     def inspect(self, image_bgr: np.ndarray) -> dict:
+        if image_bgr is None or image_bgr.size == 0:
+            raise ImageQualityError("A imagem enviada é inválida ou está vazia.")
+
         grayscale = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2GRAY)
+
         blur_score = float(cv2.Laplacian(grayscale, cv2.CV_64F).var())
         contrast_score = float(grayscale.std())
 
@@ -31,14 +36,20 @@ class ImageQualityInspector:
 
         if metrics.is_blurry:
             raise ImageQualityError(
-                "A imagem enviada esta muito tremida ou desfocada para analise confiavel.",
-                details={"blur_score": metrics.blur_score, "required_minimum": self._blur_threshold},
+                "A imagem enviada está muito tremida ou desfocada para uma análise confiável.",
+                details={
+                    "blur_score": round(metrics.blur_score, 4),
+                    "required_minimum": self._blur_threshold,
+                },
             )
 
         if metrics.has_low_contrast:
             raise ImageQualityError(
-                "A imagem enviada esta com qualidade muito baixa para analise confiavel.",
-                details={"contrast_score": metrics.contrast_score, "required_minimum": self._contrast_threshold},
+                "A imagem enviada possui contraste muito baixo para uma análise confiável.",
+                details={
+                    "contrast_score": round(metrics.contrast_score, 4),
+                    "required_minimum": self._contrast_threshold,
+                },
             )
 
         return {

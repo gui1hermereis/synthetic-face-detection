@@ -15,9 +15,8 @@ class DummyModelService:
                 "name": "resnet50",
                 "input_size": 256,
                 "device": "cpu",
-                "weights_path": "/tmp/fake-model.pth",
+                "weights": "fake-model.pth",
             },
-            "training_metrics": {"accuracy": 0.95},
         }
 
 def test_health_check(client):
@@ -25,6 +24,8 @@ def test_health_check(client):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
+    assert payload["model_available"] is True
+    assert payload["model_weights"] == "resnet50_rgb_256.pth"
 
 def test_analyze_requires_api_key(client):
     response = client.post("/api/v1/images/analyze")
@@ -56,8 +57,16 @@ def test_analyze_success(client, sample_image_bytes, monkeypatch):
 
     assert response.status_code == 200
     payload = response.get_json()
+    assert payload["filename"] == "face.jpg"
+    assert payload["image"]["width"] == 512
+    assert payload["image"]["height"] == 512
     assert payload["prediction"]["label"] == "synthetic"
+    assert payload["prediction"]["confidence"] == 0.987654
+    assert payload["prediction"]["probabilities"] == {"real": 0.012346, "synthetic": 0.987654}
+    assert payload["prediction"]["model"]["weights"] == "fake-model.pth"
     assert payload["face_detection"]["faces_detected"] == 1
+    assert payload["face_detection"]["bounding_boxes"] == [[10, 20, 100, 100]]
+    assert payload["quality"]["blur_score"] == 250.0
 
 def test_analyze_without_image_returns_400(client):
     response = client.post(

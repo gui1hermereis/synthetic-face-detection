@@ -1,9 +1,9 @@
 from functools import wraps
+import secrets
 
 from flask import current_app, request
 
 from ..errors.exceptions import AuthenticationError
-
 
 def require_api_key(view_func):
     @wraps(view_func)
@@ -12,10 +12,10 @@ def require_api_key(view_func):
         received_api_key = request.headers.get("X-API-Key", "")
 
         if not expected_api_key:
-            raise AuthenticationError("A API key do servidor nao foi configurada.")
+            raise AuthenticationError("A API key do servidor não foi configurada.")
 
-        if received_api_key != expected_api_key:
-            raise AuthenticationError("API key invalida ou ausente.")
+        if not secrets.compare_digest(received_api_key, expected_api_key):
+            raise AuthenticationError("API key inválida ou ausente.")
 
         return view_func(*args, **kwargs)
 

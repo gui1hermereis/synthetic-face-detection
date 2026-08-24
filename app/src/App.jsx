@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000/api/v1";
-const API_KEY = import.meta.env.VITE_API_KEY || "";
+const API_BASE_URL = import.meta.env.API_URL || "";
+const API_KEY = import.meta.env.API_KEY || "";
 
 const initialResult = null;
 
@@ -11,16 +11,29 @@ function App() {
   const [result, setResult] = useState(initialResult);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
-  function handleFileChange(event) {
-    const file = event.target.files?.[0] ?? null;
-    setSelectedFile(file);
-    setResult(initialResult);
-    setError("");
-
+  function selectFile(file) {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
+
+    if (!file) {
+      setSelectedFile(null);
+      setResult(initialResult);
+      setError("");
+      setPreviewUrl("");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("Envie um arquivo de imagem.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setResult(initialResult);
+    setError("");
 
     if (file) {
       setPreviewUrl(URL.createObjectURL(file));
@@ -28,6 +41,26 @@ function App() {
     }
 
     setPreviewUrl("");
+  }
+
+  function handleFileChange(event) {
+    selectFile(event.target.files?.[0] ?? null);
+  }
+
+  function handleDragOver(event) {
+    event.preventDefault();
+    setIsDragging(true);
+  }
+
+  function handleDragLeave(event) {
+    event.preventDefault();
+    setIsDragging(false);
+  }
+
+  function handleDrop(event) {
+    event.preventDefault();
+    setIsDragging(false);
+    selectFile(event.dataTransfer.files?.[0] ?? null);
   }
 
   async function handleSubmit(event) {
@@ -77,30 +110,38 @@ function App() {
   return (
     <main className="page-shell">
       <section className="hero-panel">
-        <div className="hero-copy">
+        <header className="hero-copy">
           <p className="eyebrow">Synthetic Face Detection</p>
-          <h1>Envie uma imagem facial para verificar se ela e real ou artificial</h1>
+          <h1>Analise uma imagem facial</h1>
           <p className="description">
-            A pagina envia a imagem para a API e mostra o resultado da
-            classificacao com confianca, qualidade e dados da deteccao facial.
+            Envie uma foto, confira a predicao do modelo e veja os sinais de
+            qualidade usados antes da inferencia.
           </p>
-        </div>
+        </header>
 
         <div className="workspace">
           <form className="upload-card" onSubmit={handleSubmit}>
-            <div className="env-hint">
-              <span>Autenticacao configurada por ambiente</span>
-              <small>
-                O frontend usa <code>VITE_API_KEY</code> e <code>VITE_API_BASE_URL</code>
-                do arquivo <code>.env</code>.
-              </small>
-            </div>
+            
 
-            <label className="dropzone">
+            <label
+              className={`dropzone${isDragging ? " dropzone-active" : ""}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
               <input type="file" accept="image/*" onChange={handleFileChange} />
-              <span>{selectedFile ? selectedFile.name : "Clique para selecionar uma imagem"}</span>
-              <small>Formatos comuns como JPG e PNG funcionam melhor.</small>
+              <strong>{selectedFile ? selectedFile.name : "Arraste e solte sua imagem aqui"}</strong>
+              <small>
+                {selectedFile
+                  ? `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`
+                  : "Ou clique para selecionar JPG, PNG e outros formatos de imagem."}
+              </small>
             </label>
+
+            <div className="upload-summary">
+              <span>Arquivo</span>
+              <strong>{selectedFile ? "Selecionado" : "Aguardando imagem"}</strong>
+            </div>
 
             <button className="primary-button" type="submit" disabled={isLoading}>
               {isLoading ? "Analisando..." : "Analisar imagem"}
@@ -110,17 +151,27 @@ function App() {
           </form>
 
           <section className="result-card">
-            {previewUrl ? <img className="preview-image" src={previewUrl} alt="Preview da imagem selecionada" /> : null}
+            {previewUrl ? (
+              <img className="preview-image" src={previewUrl} alt="Preview da imagem selecionada" />
+            ) : null}
 
             {!result ? (
               <div className="placeholder">
-                <h2>Resultado</h2>
-                <p>Depois do envio, a classificacao do modelo aparecera aqui.</p>
+                <h2>{selectedFile ? "Pronto para analisar" : "Resultado"}</h2>
+                <p>
+                  {selectedFile
+                    ? "Clique em analisar imagem para enviar o arquivo para a API."
+                    : "Depois do envio, a classificacao do modelo aparecera aqui."}
+                </p>
               </div>
             ) : (
               <div className="result-content">
                 <div className="result-header">
-                  <h2>{result.prediction.label === "synthetic" ? "Imagem artificial" : "Imagem real"}</h2>
+                  <h2>
+                    {result.prediction.label === "synthetic"
+                      ? "Imagem artificial"
+                      : "Imagem real"}
+                  </h2>
                   <strong>{(result.prediction.confidence * 100).toFixed(2)}%</strong>
                 </div>
 

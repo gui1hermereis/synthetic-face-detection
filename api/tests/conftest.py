@@ -9,7 +9,7 @@ API_DIR = Path(__file__).resolve().parents[1]
 if str(API_DIR) not in sys.path:
     sys.path.insert(0, str(API_DIR))
 
-from src import create_app
+from server import create_app
 
 @pytest.fixture
 def app():
@@ -18,7 +18,6 @@ def app():
             "TESTING": True,
             "API_KEY": "test-key",
             "MODEL_WEIGHTS_PATH": str(API_DIR / "models" / "resnet50_rgb_256.pth"),
-            "MODEL_METADATA_PATH": str(API_DIR / "models" / "model_metadata.json"),
         }
     )
     return app

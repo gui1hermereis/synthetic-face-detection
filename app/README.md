@@ -5,8 +5,8 @@
 Crie um arquivo `.env` em `app/` com base no `.env.example`:
 
 ```bash
-VITE_API_BASE_URL=http://127.0.0.1:5000/api/v1
-VITE_API_KEY=sua-api-key
+API_URL=http://127.0.0.1:5000/api/v1
+API_KEY=sua-api-key
 ```
 
 ## Como executar

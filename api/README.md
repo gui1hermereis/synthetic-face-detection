@@ -18,7 +18,7 @@ api/
   .env
   .env.example
   models/
-    model_metadata.json
+    resnet50_rgb_256.pth
   src/
     config/
     errors/
@@ -42,7 +42,7 @@ Fluxo:
 6. aplica o preprocessamento do treinamento:
    `RGB -> Resize(256x256) -> ToTensor -> Normalize(ImageNet)`
 7. executa a inferencia
-8. retorna classe, confianca, probabilidades e metadados do modelo
+8. retorna classe, confianca, probabilidades e dados do modelo carregado
 
 ## Endpoint de health
 
@@ -74,6 +74,5 @@ pytest tests -q
 
 ## Observacoes importantes
 
-- O arquivo de pesos esperado por padrao esta em `./models/resnet50_rgb_256.pth`.
+- A API carrega o primeiro arquivo `.pth` encontrado em `./models/`.
 - O modelo precisa ter sido salvo com a mesma arquitetura do notebook.
-- Preencha `models/model_metadata.json` com as metricas reais do treinamento para expor accuracy, precision, recall e f1 na resposta.

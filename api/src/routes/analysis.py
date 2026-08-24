@@ -10,6 +10,10 @@ analysis_blueprint = Blueprint("analysis", __name__)
 @require_api_key
 def analyze_image():
     file_storage = request.files.get("image")
-    service = AnalysisService(current_app.config, ModelService(current_app.config))
-    result = service.analyze(file_storage)
+
+    model_service = ModelService(current_app.config)
+    analysis_service = AnalysisService(current_app.config, model_service)
+
+    result = analysis_service.analyze(file_storage)
+
     return jsonify(result), 200

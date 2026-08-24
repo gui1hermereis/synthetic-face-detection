@@ -16,11 +16,21 @@ class AnalysisService:
         self._model_service = model_service
 
     def analyze(self, file_storage: FileStorage | None) -> dict:
-        if file_storage is None or not file_storage.filename:
-            raise InvalidPayloadError("Envie a imagem no campo 'image' do formulario multipart.")
+        if file_storage is None:
+            raise InvalidPayloadError("Envie a imagem no campo 'image' do formulário multipart.")
+
+        filename = (file_storage.filename or "").strip()
+
+        if not filename:
+            raise InvalidPayloadError("Envie a imagem no campo 'image' do formulário multipart.")
 
         image_bytes = file_storage.read()
-        loaded_image = self._image_loader.load(image_bytes=image_bytes, filename=file_storage.filename)
+
+        loaded_image = self._image_loader.load(
+            image_bytes=image_bytes,
+            filename=filename,
+        )
+
         face_detection = self._face_detector.ensure_single_face(loaded_image.image_bgr)
         quality = self._image_quality.inspect(loaded_image.image_bgr)
         tensor = self._preprocessor.transform(loaded_image.image_pil)

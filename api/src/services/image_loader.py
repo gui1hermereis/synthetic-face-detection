@@ -3,7 +3,7 @@ from io import BytesIO
 
 import cv2
 import numpy as np
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 from ..errors.exceptions import ImageValidationError
 
@@ -24,29 +24,27 @@ class ImageLoader:
 
     def load(self, image_bytes: bytes, filename: str) -> LoadedImage:
         if not image_bytes:
-            raise ImageValidationError("O arquivo enviado esta vazio.")
+            raise ImageValidationError("O arquivo enviado está vazio.")
 
         if len(image_bytes) > self._max_content_length:
             raise ImageValidationError(
-                "O arquivo enviado excede o tamanho maximo permitido.",
+                "O arquivo enviado excede o tamanho máximo permitido.",
                 details={"max_bytes": self._max_content_length},
             )
 
         try:
-            image_file = BytesIO(image_bytes)
-            image_pil = Image.open(image_file)
-            image_format = image_pil.format or "unknown"
-            image_pil = image_pil.convert("RGB")
-        except UnidentifiedImageError as error:
-            raise ImageValidationError("O arquivo enviado nao e uma imagem valida.") from error
+            with Image.open(BytesIO(image_bytes)) as image:
+                image_format = image.format or "unknown"
+                image = ImageOps.exif_transpose(image)
+                image_pil = image.convert("RGB")
+        except (UnidentifiedImageError, OSError) as error:
+            raise ImageValidationError("O arquivo enviado não é uma imagem válida.") from error
 
-        image_rgb = np.array(image_pil)
-        image_bgr = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
         width, height = image_pil.size
 
         if width < self._min_width or height < self._min_height:
             raise ImageValidationError(
-                "A imagem enviada possui resolucao insuficiente para analise.",
+                "A imagem enviada possui resolução insuficiente para análise.",
                 details={
                     "width": width,
                     "height": height,
@@ -54,6 +52,9 @@ class ImageLoader:
                     "minimum_height": self._min_height,
                 },
             )
+
+        image_rgb = np.asarray(image_pil)
+        image_bgr = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
 
         return LoadedImage(
             filename=filename,

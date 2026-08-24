@@ -8,24 +8,28 @@ class ApiError(Exception):
 
 class AuthenticationError(ApiError):
     def __init__(self, message: str, details: dict | None = None):
-        super().__init__(message, status_code=401, code="authentication_error", details=details)
+        super().__init__(message, 401, "authentication_error", details)
 
 class InvalidPayloadError(ApiError):
     def __init__(self, message: str, details: dict | None = None):
-        super().__init__(message, status_code=400, code="invalid_payload", details=details)
+        super().__init__(message, 400, "invalid_payload", details)
 
 class ImageValidationError(ApiError):
     def __init__(self, message: str, details: dict | None = None):
-        super().__init__(message, status_code=422, code="image_validation_error", details=details)
+        super().__init__(message, 422, "image_validation_error", details)
 
 class FaceValidationError(ApiError):
     def __init__(self, message: str, details: dict | None = None):
-        super().__init__(message, status_code=422, code="face_validation_error", details=details)
+        super().__init__(message, 422, "face_validation_error", details)
 
 class ImageQualityError(ApiError):
     def __init__(self, message: str, details: dict | None = None):
-        super().__init__(message, status_code=422, code="image_quality_error", details=details)
+        super().__init__(message, 422, "image_quality_error", details)
+
+class ModelUnavailableError(ApiError):
+    def __init__(self, message: str, details: dict | None = None):
+        super().__init__(message, 503, "model_unavailable", details)
 
 class ModelInferenceError(ApiError):
     def __init__(self, message: str, details: dict | None = None):
-        super().__init__(message, status_code=500, code="model_inference_error", details=details)
+        super().__init__(message, 500, "model_inference_error", details)

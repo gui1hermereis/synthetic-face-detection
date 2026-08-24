@@ -6,42 +6,32 @@ from .exceptions import ApiError
 def register_error_handlers(app: Flask) -> None:
     @app.errorhandler(ApiError)
     def handle_api_error(error: ApiError):
-        response = jsonify(
-            {
-                "error": {
-                    "code": error.code,
-                    "message": error.message,
-                    "details": error.details,
-                }
+        return jsonify({
+            "error": {
+                "code": error.code,
+                "message": error.message,
+                "details": error.details,
             }
-        )
-        response.status_code = error.status_code
-        return response
+        }), error.status_code
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(error: HTTPException):
-        response = jsonify(
-            {
-                "error": {
-                    "code": error.name.lower().replace(" ", "_"),
-                    "message": error.description,
-                    "details": {},
-                }
+        return jsonify({
+            "error": {
+                "code": error.name.lower().replace(" ", "_"),
+                "message": error.description,
+                "details": {},
             }
-        )
-        response.status_code = error.code or 500
-        return response
+        }), error.code or 500
 
     @app.errorhandler(Exception)
     def handle_unexpected_error(error: Exception):
-        response = jsonify(
-            {
-                "error": {
-                    "code": "internal_server_error",
-                    "message": "Ocorreu um erro inesperado durante o processamento.",
-                    "details": {"reason": str(error)},
-                }
+        app.logger.exception("Erro inesperado durante o processamento.")
+
+        return jsonify({
+            "error": {
+                "code": "internal_server_error",
+                "message": "Ocorreu um erro inesperado durante o processamento.",
+                "details": {},
             }
-        )
-        response.status_code = 500
-        return response
+        }), 500
