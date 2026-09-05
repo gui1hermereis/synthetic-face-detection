@@ -37,12 +37,13 @@ Fluxo:
 1. valida `X-API-Key`
 2. recebe a imagem no campo multipart `image`
 3. valida tamanho e resolucao
-4. detecta se existe exatamente um rosto humano
-5. rejeita imagem tremida ou com contraste ruim
-6. aplica o preprocessamento do treinamento:
+4. detecta se existe exatamente um rosto humano com YuNet
+5. recorta o rosto detectado, incluindo uma margem configuravel
+6. rejeita o recorte facial se estiver tremido ou com contraste ruim
+7. aplica o preprocessamento do treinamento:
    `RGB -> Resize(256x256) -> ToTensor -> Normalize(ImageNet)`
-7. executa a inferencia
-8. retorna classe, confianca, probabilidades e dados do modelo carregado
+8. executa a inferencia
+9. retorna classe, confianca, probabilidades e dados do modelo carregado
 
 ## Endpoint de health
 
@@ -57,6 +58,19 @@ curl -X POST "http://127.0.0.1:5000/api/v1/images/analyze" \
 ```
 
 ## Como executar
+
+Antes de iniciar a API, baixe o modelo YuNet oficial e salve-o em
+`api/models/face_detection_yunet_2023mar.onnx`:
+
+```bash
+mkdir -p models
+curl -fL -o models/face_detection_yunet_2023mar.onnx \
+  https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx
+```
+
+Execute esse comando a partir da pasta `api/`. O modelo nao e versionado pelo
+Git; em producao, disponibilize-o no mesmo caminho ou configure
+`FACE_DETECTOR_MODEL_PATH`.
 
 ```bash
 python3 -m venv .venv

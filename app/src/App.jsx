@@ -5,6 +5,10 @@ const API_KEY = import.meta.env.API_KEY || "";
 
 const initialResult = null;
 
+function formatFileSize(bytes) {
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -14,11 +18,10 @@ function App() {
   const [isDragging, setIsDragging] = useState(false);
 
   function selectFile(file) {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-
     if (!file) {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
       setSelectedFile(null);
       setResult(initialResult);
       setError("");
@@ -31,6 +34,10 @@ function App() {
       return;
     }
 
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setSelectedFile(file);
     setResult(initialResult);
     setError("");
@@ -41,6 +48,10 @@ function App() {
     }
 
     setPreviewUrl("");
+  }
+
+  function clearSelection() {
+    selectFile(null);
   }
 
   function handleFileChange(event) {
@@ -110,18 +121,32 @@ function App() {
   return (
     <main className="page-shell">
       <section className="hero-panel">
-        <header className="hero-copy">
-          <p className="eyebrow">Synthetic Face Detection</p>
-          <h1>Analise uma imagem facial</h1>
-          <p className="description">
-            Envie uma foto, confira a predicao do modelo e veja os sinais de
-            qualidade usados antes da inferencia.
-          </p>
+        <header className="topbar">
+          <a className="brand" href="#top" aria-label="Synthetic Face Detection">
+            <span className="brand-mark">S</span>
+            <span>Synthetic Face Detection</span>
+          </a>
+          <span className="api-status"><i /> Análise por IA</span>
         </header>
+
+        <section className="hero-copy" id="top">
+          <p className="eyebrow">Validação facial</p>
+          <h1>Analise a autenticidade de um rosto.</h1>
+          <p className="description">
+            Envie uma imagem com um único rosto. A API valida a qualidade da face
+            antes de executar a classificação.
+          </p>
+        </section>
 
         <div className="workspace">
           <form className="upload-card" onSubmit={handleSubmit}>
-            
+            <div className="card-heading">
+              <span className="step">01</span>
+              <div>
+                <h2>Enviar imagem</h2>
+                <p>JPG, PNG ou outro formato de imagem.</p>
+              </div>
+            </div>
 
             <label
               className={`dropzone${isDragging ? " dropzone-active" : ""}`}
@@ -130,17 +155,25 @@ function App() {
               onDrop={handleDrop}
             >
               <input type="file" accept="image/*" onChange={handleFileChange} />
-              <strong>{selectedFile ? selectedFile.name : "Arraste e solte sua imagem aqui"}</strong>
+              <span className="upload-icon">↑</span>
+              <strong>{selectedFile ? selectedFile.name : "Solte sua imagem aqui"}</strong>
               <small>
                 {selectedFile
-                  ? `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`
-                  : "Ou clique para selecionar JPG, PNG e outros formatos de imagem."}
+                  ? formatFileSize(selectedFile.size)
+                  : "ou clique para procurar um arquivo"}
               </small>
             </label>
 
             <div className="upload-summary">
-              <span>Arquivo</span>
-              <strong>{selectedFile ? "Selecionado" : "Aguardando imagem"}</strong>
+              <div>
+                <span>Arquivo selecionado</span>
+                <strong>{selectedFile ? selectedFile.name : "Nenhum arquivo"}</strong>
+              </div>
+              {selectedFile ? (
+                <button className="text-button" type="button" onClick={clearSelection}>
+                  Remover
+                </button>
+              ) : null}
             </div>
 
             <button className="primary-button" type="submit" disabled={isLoading}>
@@ -151,13 +184,22 @@ function App() {
           </form>
 
           <section className="result-card">
-            {previewUrl ? (
+            <div className="card-heading result-card-heading">
+              <span className="step">02</span>
+              <div>
+                <h2>Resultado da análise</h2>
+                <p>{result ? "Classificação concluída" : "Aguardando uma imagem"}</p>
+              </div>
+            </div>
+
+            {previewUrl ? <div className="preview-frame">
               <img className="preview-image" src={previewUrl} alt="Preview da imagem selecionada" />
-            ) : null}
+            </div> : null}
 
             {!result ? (
               <div className="placeholder">
-                <h2>{selectedFile ? "Pronto para analisar" : "Resultado"}</h2>
+                <span className="placeholder-icon">⌁</span>
+                <h2>{selectedFile ? "Pronto para analisar" : "Nenhuma análise ainda"}</h2>
                 <p>
                   {selectedFile
                     ? "Clique em analisar imagem para enviar o arquivo para a API."
@@ -167,12 +209,20 @@ function App() {
             ) : (
               <div className="result-content">
                 <div className="result-header">
-                  <h2>
-                    {result.prediction.label === "synthetic"
-                      ? "Imagem artificial"
-                      : "Imagem real"}
-                  </h2>
-                  <strong>{(result.prediction.confidence * 100).toFixed(2)}%</strong>
+                  <div>
+                    <span className={`result-label ${result.prediction.label}`}>
+                      {result.prediction.label === "synthetic" ? "Sintética" : "Real"}
+                    </span>
+                    <h2>
+                      {result.prediction.label === "synthetic"
+                        ? "Imagem artificial"
+                        : "Imagem real"}
+                    </h2>
+                  </div>
+                  <div className="confidence">
+                    <span>Confiança</span>
+                    <strong>{(result.prediction.confidence * 100).toFixed(2)}%</strong>
+                  </div>
                 </div>
 
                 <div className="stats-grid">

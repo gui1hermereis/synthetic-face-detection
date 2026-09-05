@@ -12,7 +12,11 @@ def analyze_image():
     file_storage = request.files.get("image")
 
     model_service = ModelService(current_app.config)
-    analysis_service = AnalysisService(current_app.config, model_service)
+    analysis_service = AnalysisService(
+        current_app.config,
+        model_service,
+        current_app.extensions["face_detector"],
+    )
 
     result = analysis_service.analyze(file_storage)
 

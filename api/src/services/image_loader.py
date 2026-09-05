@@ -10,7 +10,6 @@ from ..errors.exceptions import ImageValidationError
 @dataclass
 class LoadedImage:
     filename: str
-    image_pil: Image.Image
     image_bgr: np.ndarray
     width: int
     height: int
@@ -36,11 +35,11 @@ class ImageLoader:
             with Image.open(BytesIO(image_bytes)) as image:
                 image_format = image.format or "unknown"
                 image = ImageOps.exif_transpose(image)
-                image_pil = image.convert("RGB")
+                image_rgb_pil = image.convert("RGB")
         except (UnidentifiedImageError, OSError) as error:
             raise ImageValidationError("O arquivo enviado não é uma imagem válida.") from error
 
-        width, height = image_pil.size
+        width, height = image_rgb_pil.size
 
         if width < self._min_width or height < self._min_height:
             raise ImageValidationError(
@@ -53,12 +52,11 @@ class ImageLoader:
                 },
             )
 
-        image_rgb = np.asarray(image_pil)
+        image_rgb = np.asarray(image_rgb_pil)
         image_bgr = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
 
         return LoadedImage(
             filename=filename,
-            image_pil=image_pil,
             image_bgr=image_bgr,
             width=width,
             height=height,
