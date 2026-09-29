@@ -10,3 +10,4 @@ models/*.pth
 *.tmp
 .DS_Store
 dataset
+dataset_faces_224_m15_yunet_v1

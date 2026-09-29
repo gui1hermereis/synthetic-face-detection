@@ -5,6 +5,7 @@ import numpy as np
 
 from ..errors.exceptions import ImageQualityError
 
+
 @dataclass
 class ImageQualityMetrics:
     blur_score: float
@@ -22,7 +23,13 @@ class ImageQualityInspector:
         if image_bgr is None or image_bgr.size == 0:
             raise ImageQualityError("A imagem enviada é inválida ou está vazia.")
 
-        grayscale = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2GRAY)
+        quality_image = cv2.resize(
+            image_bgr,
+            (224, 224),
+            interpolation=cv2.INTER_AREA,
+        )
+
+        grayscale = cv2.cvtColor(quality_image, cv2.COLOR_BGR2GRAY)
 
         blur_score = float(cv2.Laplacian(grayscale, cv2.CV_64F).var())
         contrast_score = float(grayscale.std())

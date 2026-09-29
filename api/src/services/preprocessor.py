@@ -3,15 +3,16 @@ from PIL import Image
 from torchvision import transforms
 
 class ModelPreprocessor:
-    def __init__(self, config):
-        input_size = config["MODEL_INPUT_SIZE"]
+    def __init__(self, metadata: dict):
+        input_size = metadata["image_size"]
+        normalization = metadata["normalization"]
 
         self._transform = transforms.Compose([
             transforms.Resize((input_size, input_size)),
             transforms.ToTensor(),
             transforms.Normalize(
-                mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225],
+                mean=normalization["mean"],
+                std=normalization["std"],
             ),
         ])
 

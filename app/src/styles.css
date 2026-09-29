@@ -82,7 +82,7 @@ h1 { margin: 0; max-width: 15ch; color: #f8fafc; font-size: clamp(2.35rem, 5vw, 
 .result-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #242c3d; }
 .result-header h2 { margin: 9px 0 0; color: #f8fafc; font-size: clamp(1.35rem, 3vw, 1.8rem); letter-spacing: -.04em; }
 .result-label { display: inline-flex; border: 1px solid; border-radius: 99px; padding: 4px 8px; font-size: .68rem; font-weight: 800; text-transform: uppercase; }
-.result-label.synthetic { border-color: rgba(251, 146, 60, .35); background: rgba(154, 52, 18, .2); color: #fdba74; }
+.result-label.fake { border-color: rgba(251, 146, 60, .35); background: rgba(154, 52, 18, .2); color: #fdba74; }
 .result-label.real { border-color: rgba(45, 212, 191, .3); background: rgba(15, 118, 110, .18); color: #5eead4; }
 .confidence { display: grid; gap: 4px; text-align: right; }
 .confidence strong { color: #c7d2fe; font-size: 1.35rem; letter-spacing: -.04em; }

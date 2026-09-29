@@ -5,16 +5,22 @@ from src.errors.exceptions import FaceValidationError, ImageQualityError
 
 class DummyModelService:
     def __init__(self, _config):
-        pass
+        self.metadata = {
+            "image_size": 224,
+            "normalization": {
+                "mean": [0.485, 0.456, 0.406],
+                "std": [0.229, 0.224, 0.225],
+            },
+        }
 
     def predict(self, _tensor):
         return {
-            "label": "synthetic",
+            "label": "fake",
             "confidence": 0.987654,
-            "probabilities": {"real": 0.012346, "synthetic": 0.987654},
+            "probabilities": {"fake": 0.987654, "real": 0.012346},
             "model": {
-                "name": "resnet50",
-                "input_size": 256,
+                "name": "resnet34",
+                "input_size": 224,
                 "device": "cpu",
                 "weights": "fake-model.pth",
             },
@@ -158,7 +164,7 @@ def test_analyze_success_preprocesses_the_face_crop(client, sample_image_bytes, 
     assert response.status_code == 200
     payload = response.get_json()
     assert captured["shape"] == (130, 130, 3)
-    assert payload["prediction"]["label"] == "synthetic"
+    assert payload["prediction"]["label"] == "fake"
     assert payload["face_detection"] == {
         "faces_detected": 1,
         "bounding_boxes": [[10, 20, 100, 100]],

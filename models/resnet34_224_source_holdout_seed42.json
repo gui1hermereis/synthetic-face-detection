@@ -1,0 +1,39 @@
+{
+  "architecture": "resnet34",
+  "image_size": 224,
+  "class_names": [
+    "fake",
+    "real"
+  ],
+  "class_to_index": {
+    "fake": 0,
+    "real": 1
+  },
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "fake_probability_threshold": 0.2,
+  "threshold_selection": {
+    "dataset": "validation",
+    "metric": "fbeta",
+    "beta": 2,
+    "positive_class": "fake"
+  },
+  "face_crop": {
+    "detector": "YuNet face_detection_yunet_2023mar.onnx",
+    "score_threshold": 0.9,
+    "single_face_only": true,
+    "margin": 0.15,
+    "crop_shape": "square",
+    "preprocessing_manifest": "/home/guilhermemathiasreis/Documents/synthetic-face-detection/training/dataset_faces_224_m15_yunet_v1/preprocessing_manifest.csv"
+  }
+}

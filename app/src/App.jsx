@@ -211,10 +211,10 @@ function App() {
                 <div className="result-header">
                   <div>
                     <span className={`result-label ${result.prediction.label}`}>
-                      {result.prediction.label === "synthetic" ? "Sintética" : "Real"}
+                      {result.prediction.label === "fake" ? "Sintética" : "Real"}
                     </span>
                     <h2>
-                      {result.prediction.label === "synthetic"
+                      {result.prediction.label === "fake"
                         ? "Imagem artificial"
                         : "Imagem real"}
                     </h2>
