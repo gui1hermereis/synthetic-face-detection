@@ -1,2 +1,3 @@
 .idea
 testes_models
+.pytest_cache
