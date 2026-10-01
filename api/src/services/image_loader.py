@@ -7,6 +7,8 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 
 from ..errors.exceptions import ImageValidationError
 
+ALLOWED_IMAGE_FORMATS = {"JPEG", "PNG"}
+
 @dataclass
 class LoadedImage:
     filename: str
@@ -34,6 +36,14 @@ class ImageLoader:
         try:
             with Image.open(BytesIO(image_bytes)) as image:
                 image_format = image.format or "unknown"
+                if image_format not in ALLOWED_IMAGE_FORMATS:
+                    raise ImageValidationError(
+                        "Formato de imagem não suportado. Envie somente JPG, JPEG ou PNG.",
+                        details={
+                            "allowed_formats": ["JPEG", "PNG"],
+                            "received_format": image_format,
+                        },
+                    )
                 image = ImageOps.exif_transpose(image)
                 image_rgb_pil = image.convert("RGB")
         except (UnidentifiedImageError, OSError) as error:

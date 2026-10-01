@@ -4,6 +4,8 @@ const API_BASE_URL = import.meta.env.API_URL || "";
 const API_KEY = import.meta.env.API_KEY || "";
 
 const initialResult = null;
+const ACCEPTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
+const ACCEPTED_IMAGE_EXTENSIONS = /\.(jpe?g|png)$/i;
 
 function formatFileSize(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
@@ -29,8 +31,10 @@ function App() {
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
-      setError("Envie um arquivo de imagem.");
+    const hasAcceptedExtension = ACCEPTED_IMAGE_EXTENSIONS.test(file.name);
+    const hasKnownMimeType = file.type !== "";
+    if (!ACCEPTED_IMAGE_TYPES.has(file.type) && (hasKnownMimeType || !hasAcceptedExtension)) {
+      setError("Envie somente arquivos JPG, JPEG ou PNG.");
       return;
     }
 
@@ -144,7 +148,7 @@ function App() {
               <span className="step">01</span>
               <div>
                 <h2>Enviar imagem</h2>
-                <p>JPG, PNG ou outro formato de imagem.</p>
+                <p>Somente JPG, JPEG ou PNG.</p>
               </div>
             </div>
 
@@ -154,7 +158,7 @@ function App() {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <input type="file" accept="image/*" onChange={handleFileChange} />
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" onChange={handleFileChange} />
               <span className="upload-icon">↑</span>
               <strong>{selectedFile ? selectedFile.name : "Solte sua imagem aqui"}</strong>
               <small>

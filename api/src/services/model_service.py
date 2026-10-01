@@ -143,18 +143,32 @@ class ModelService:
                 },
             )
 
-        return {
-            "architecture": self._artifact.get(
-                "architecture",
-                self._config["MODEL_ARCHITECTURE"],
-            ),
+        architecture = self._artifact.get(
+            "architecture", self._config["MODEL_ARCHITECTURE"]
+        )
+        image_size = int(
+            self._artifact.get("image_size", self._config["MODEL_INPUT_SIZE"])
+        )
+        input_channels = int(self._artifact.get("input_channels", 3))
 
-            "image_size": int(
-                self._artifact.get(
-                    "image_size",
-                    self._config["MODEL_INPUT_SIZE"],
-                )
-            ),
+        if architecture != "resnet34" or image_size != 224 or input_channels != 3:
+            raise ModelInferenceError(
+                "O artefato não é compatível com o modelo oficial ResNet34 RGB 224x224."
+            )
+
+        if (
+            not isinstance(normalization, dict)
+            or len(normalization.get("mean", [])) != 3
+            or len(normalization.get("std", [])) != 3
+        ):
+            raise ModelInferenceError(
+                "Os metadados de normalização RGB do artefato são inválidos."
+            )
+
+        return {
+            "architecture": architecture,
+
+            "image_size": image_size,
 
             "class_names": class_names,
 
@@ -179,23 +193,10 @@ class ModelService:
         architecture = metadata["architecture"]
         class_names = metadata["class_names"]
 
-        builders = {
-            "resnet18": models.resnet18,
-            "resnet34": models.resnet34,
-            "resnet50": models.resnet50,
-        }
+        if architecture != "resnet34":
+            raise ModelInferenceError("Arquitetura de modelo não suportada.")
 
-        if architecture not in builders:
-            raise ModelInferenceError(
-                "Arquitetura de modelo não suportada.",
-                details={
-                    "architecture": architecture,
-                },
-            )
-
-        model = builders[architecture](
-            weights=None
-        )
+        model = models.resnet34(weights=None)
 
         model.fc = nn.Linear(
             model.fc.in_features,
@@ -209,11 +210,7 @@ class ModelService:
 
         except Exception as exc:
             raise ModelInferenceError(
-                "Não foi possível carregar os pesos do modelo.",
-                details={
-                    "weights_path": str(self._weights_path),
-                    "error": str(exc),
-                },
+                "Não foi possível carregar os pesos do modelo."
             ) from exc
 
         model.to(self._device)
@@ -315,10 +312,7 @@ class ModelService:
 
         except Exception as exc:
             raise ModelInferenceError(
-                "Erro durante a inferência do modelo.",
-                details={
-                    "error": str(exc),
-                },
+                "Não foi possível concluir a análise da imagem."
             ) from exc
 
         probabilities = (

@@ -19,7 +19,7 @@ api/
   .env.example
 models/
   face_detection_yunet_2023mar.onnx
-  resnet34_224_source_holdout_seed42.pt
+  resnet34_224.pt
   src/
     config/
     errors/
@@ -70,8 +70,8 @@ curl -fL -o ../models/face_detection_yunet_2023mar.onnx \
 ```
 
 Execute esse comando a partir da pasta `api/`. Depois de treinar o notebook
-`0.2_resnet34_224_robusto.ipynb`, o artefato sera salvo em
-`models/resnet34_224_source_holdout_seed42.pt`, também na raiz. A API usa esse
+`0.1_resnet34_224.ipynb`, o artefato sera salvo em
+`models/resnet34_224.pt`, também na raiz. A API usa esse
 arquivo por padrão; em produção, configure `MODEL_WEIGHTS_PATH` se necessário.
 
 ```bash

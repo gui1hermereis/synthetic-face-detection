@@ -38,7 +38,7 @@ class Settings:
 
     MODEL_WEIGHTS_PATH = path_from_env(
         "MODEL_WEIGHTS_PATH",
-        MODELS_DIR / "resnet34_224_source_holdout_seed42.pt",
+        MODELS_DIR / "resnet34_224.pt",
     )
 
     # Fallback para checkpoints antigos.

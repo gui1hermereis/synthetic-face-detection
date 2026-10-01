@@ -6,11 +6,14 @@ from .exceptions import ApiError
 def register_error_handlers(app: Flask) -> None:
     @app.errorhandler(ApiError)
     def handle_api_error(error: ApiError):
+        # Erros do cliente (4xx) podem detalhar a correção necessária. Em erros
+        # internos, não exponha caminhos, stack trace ou implementação do modelo.
+        details = error.details if error.status_code < 500 else {}
         return jsonify({
             "error": {
                 "code": error.code,
                 "message": error.message,
-                "details": error.details,
+                "details": details,
             }
         }), error.status_code
 
