@@ -34,7 +34,12 @@ def analyze(url, api_key, image_path, timeout):
             response.read()
             return time.perf_counter() - started, 200 <= response.status < 300, None
     except HTTPError as error:
-        return time.perf_counter() - started, False, f"HTTP {error.code}"
+        response_body = error.read().decode("utf-8", errors="replace")
+        return (
+            time.perf_counter() - started,
+            False,
+            f"HTTP {error.code}: {response_body}",
+        )
     except (URLError, TimeoutError, OSError) as error:
         return time.perf_counter() - started, False, str(error)
 
@@ -52,3 +57,15 @@ def report(latencies, failures, elapsed):
     print(json.dumps(payload, indent=2))
     if failures:
         print("failure_samples:", failures[:5])
+
+def validate_benchmark_arguments(parser, image_path, requests, concurrency=None):
+    if not image_path.is_file():
+        parser.error(
+            f"--image deve apontar para um arquivo existente. Recebido: {image_path}"
+        )
+    if image_path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+        parser.error("--image deve ser um arquivo JPG, JPEG ou PNG.")
+    if requests < 1:
+        parser.error("--requests deve ser maior que zero.")
+    if concurrency is not None and concurrency < 1:
+        parser.error("--concurrency deve ser maior que zero.")

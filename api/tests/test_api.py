@@ -95,10 +95,27 @@ def test_analyze_rejects_corrupted_or_renamed_image(client, image_bytes, filenam
 
 
 def test_analyze_rejects_insufficient_resolution(client, make_image_bytes):
-    response = post_image(client, make_image_bytes(size=(255, 255)))
-    assert response.status_code == 422
-    assert response.get_json()["error"]["details"]["minimum_width"] == 256
+    minimum_width = client.application.config["MIN_IMAGE_WIDTH"]
+    minimum_height = client.application.config["MIN_IMAGE_HEIGHT"]
 
+    response = post_image(
+        client,
+        make_image_bytes(
+            size=(
+                minimum_width - 1,
+                minimum_height - 1,
+            )
+        ),
+    )
+
+    assert response.status_code == 422
+
+    assert response.get_json()["error"]["details"] == {
+        "width": minimum_width - 1,
+        "height": minimum_height - 1,
+        "minimum_width": minimum_width,
+        "minimum_height": minimum_height,
+    }
 
 def test_analyze_rejects_image_without_faces(client, app, sample_image_bytes):
     app.extensions["face_detector"].error = FaceValidationError(

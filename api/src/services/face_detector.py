@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from threading import Lock
 
 import cv2
 import numpy as np
@@ -167,15 +168,20 @@ class FaceDetector:
             5000,
         )
 
-        self._min_face_size = config[
-            "MIN_FACE_SIZE"
-        ]
-
         if self._detector is None:
             raise RuntimeError(
                 "Não foi possível inicializar "
                 "o detector facial YuNet."
             )
+
+        # O FaceDetector é compartilhado entre as requisições.
+        # O Lock impede que duas threads alterem o estado
+        # interno do YuNet ao mesmo tempo.
+        self._lock = Lock()
+
+        self._min_face_size = config[
+            "MIN_FACE_SIZE"
+        ]
 
     def ensure_single_face(
         self,
@@ -233,17 +239,21 @@ class FaceDetector:
         else:
             detector_image = image_bgr
 
-        self._detector.setInputSize(
-            (
-                detector_image.shape[1],
-                detector_image.shape[0],
-            )
-        )
-
         try:
-            _, faces = self._detector.detect(
-                detector_image
-            )
+            # setInputSize altera o estado interno do detector.
+            # Por isso, setInputSize e detect precisam ficar
+            # dentro do mesmo Lock.
+            with self._lock:
+                self._detector.setInputSize(
+                    (
+                        detector_image.shape[1],
+                        detector_image.shape[0],
+                    )
+                )
+
+                _, faces = self._detector.detect(
+                    detector_image
+                )
 
         except Exception as exc:
             raise FaceValidationError(
