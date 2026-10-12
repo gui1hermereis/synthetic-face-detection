@@ -151,9 +151,9 @@ class ModelService:
         )
         input_channels = int(self._artifact.get("input_channels", 3))
 
-        if architecture != "resnet34" or image_size != 224 or input_channels != 3:
+        if architecture not in {"resnet18", "resnet34", "resnet50"} or image_size != 224 or input_channels != 3:
             raise ModelInferenceError(
-                "O artefato não é compatível com o modelo oficial ResNet34 RGB 224x224."
+                "O artefato deve ser ResNet18, ResNet34 ou ResNet50, RGB 224x224."
             )
 
         if (
@@ -193,10 +193,13 @@ class ModelService:
         architecture = metadata["architecture"]
         class_names = metadata["class_names"]
 
-        if architecture != "resnet34":
-            raise ModelInferenceError("Arquitetura de modelo não suportada.")
+        model_builders = {
+            "resnet18": models.resnet18,
+            "resnet34": models.resnet34,
+            "resnet50": models.resnet50,
+        }
 
-        model = models.resnet34(weights=None)
+        model = model_builders[architecture](weights=None)
 
         model.fc = nn.Linear(
             model.fc.in_features,

@@ -15,8 +15,8 @@ latencies, failures = [], []
 started = time.perf_counter()
 for _ in range(args.requests):
     latency, success, error = analyze(args.url, args.api_key, args.image, args.timeout)
-    if success:
-        latencies.append(latency)
-    else:
+    latencies.append(latency)
+    if not success:
         failures.append(error)
-report(latencies, failures, time.perf_counter() - started)
+report(latencies, failures, time.perf_counter() - started, requests=args.requests,
+       concurrency=1, url=args.url)

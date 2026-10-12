@@ -12,6 +12,7 @@ if str(API_DIR) not in sys.path:
 from server import create_app
 from src.errors.exceptions import ModelInferenceError
 from src.services.face_detector import FaceDetectionResult
+from src.services.face_detector import FaceDetector
 
 
 OFFICIAL_METADATA = {
@@ -93,6 +94,31 @@ class FakeFaceDetector:
         if self.error is not None:
             raise self.error
         return self.result
+
+
+@pytest.fixture
+def fake_yunet(monkeypatch, tmp_path):
+    """YuNet double for deterministic detector geometry tests."""
+    model_path = tmp_path / "yunet.onnx"
+    model_path.touch()
+
+    class Detector:
+        def __init__(self):
+            self.input_size = None
+            self.faces = None
+
+        def setInputSize(self, size):
+            self.input_size = size
+
+        def detect(self, _image):
+            return 1, self.faces
+
+    detector = Detector()
+    monkeypatch.setattr("src.services.face_detector.cv2.FaceDetectorYN.create", lambda *args: detector)
+    config = {"FACE_DETECTOR_MODEL_PATH": str(model_path)}
+    metadata = {"face_crop": {"detector": "yunet.onnx", "score_threshold": 0.9,
+                              "single_face_only": True, "margin": 0.15, "crop_shape": "square"}}
+    return FaceDetector(config, metadata), detector
 
 
 @pytest.fixture

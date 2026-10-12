@@ -94,6 +94,7 @@ h1 { margin: 0; max-width: 15ch; color: #f8fafc; font-size: clamp(2.35rem, 5vw, 
 .probabilities h3 { margin: 0 0 14px; color: #b8c5d8; font-size: .82rem; }
 .probability-row { display: grid; grid-template-columns: 76px 1fr 62px; gap: 12px; align-items: center; margin-bottom: 12px; color: #aebacc; font-size: .8rem; }
 .probability-row strong { color: #dce4f0; font-size: .76rem; text-align: right; }
+.result-note { margin: 20px 0 0; padding: 14px 16px; border: 1px solid #313d55; border-radius: 10px; background: #111827; color: #9aa7bc; font-size: 0.8rem; line-height: 1.6; }
 .bar-track { height: 7px; overflow: hidden; border-radius: 99px; background: #273247; }
 .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #38bdf8, #818cf8); }
 

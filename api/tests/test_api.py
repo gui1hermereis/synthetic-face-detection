@@ -15,7 +15,7 @@ def post_image(client, image_bytes, filename="face.jpg", api_key="test-key"):
     )
 
 
-def test_health_reports_official_model_contract(client):
+def test_health_reports_configured_model_contract(client, app):
     response = client.get("/api/v1/health")
 
     assert response.status_code == 200
@@ -24,12 +24,18 @@ def test_health_reports_official_model_contract(client):
         "message": "API Flask inicializada com sucesso.",
         "model_available": True,
         "model": {
-            "architecture": "resnet34",
+            "architecture": app.extensions["model_service"].metadata["architecture"],
             "input_size": 224,
             "input_channels": 3,
             "class_names": ["fake", "real"],
         },
     }
+
+
+def test_health_architecture_is_not_hard_coded(app):
+    app.extensions["model_service"].metadata["architecture"] = "resnet18"
+    response = app.test_client().get("/api/v1/health")
+    assert response.get_json()["model"]["architecture"] == "resnet18"
 
 
 def test_analyze_requires_api_key(client):
@@ -165,11 +171,13 @@ def test_analyze_returns_fake_result_and_rgb_224_tensor(client, sample_image_byt
 
 
 def test_analyze_returns_real_result_below_threshold(client, sample_image_bytes, model_service):
+    model_service.metadata["fake_probability_threshold"] = 0.35
     model_service.fake_probability = 0.19
     response = post_image(client, sample_image_bytes)
     prediction = response.get_json()["prediction"]
     assert prediction["label"] == "real"
     assert prediction["probabilities"] == {"fake": 0.19, "real": 0.81}
+    assert prediction["decision_threshold"] == 0.35
 
 
 def test_analyze_uses_fake_threshold_on_boundary(client, sample_image_bytes, model_service):

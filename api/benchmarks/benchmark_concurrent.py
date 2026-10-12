@@ -18,9 +18,13 @@ started = time.perf_counter()
 with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
     futures = [executor.submit(analyze, args.url, args.api_key, args.image, args.timeout) for _ in range(args.requests)]
     for future in as_completed(futures):
-        latency, success, error = future.result()
-        if success:
-            latencies.append(latency)
-        else:
+        try:
+            latency, success, error = future.result()
+        except Exception as error:  # Count unexpected worker failures as failed requests.
+            latency, success = 0.0, False
+            error = f"{type(error).__name__}: {error}"
+        latencies.append(latency)
+        if not success:
             failures.append(error)
-report(latencies, failures, time.perf_counter() - started)
+report(latencies, failures, time.perf_counter() - started, requests=args.requests,
+       concurrency=args.concurrency, url=args.url)

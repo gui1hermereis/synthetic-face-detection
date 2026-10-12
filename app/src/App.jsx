@@ -135,7 +135,7 @@ function App() {
 
         <section className="hero-copy" id="top">
           <p className="eyebrow">Validação facial</p>
-          <h1>Analise a autenticidade de um rosto.</h1>
+          <h1>Identifique possíveis rostos sintéticos.</h1>
           <p className="description">
             Envie uma imagem com um único rosto. A API valida a qualidade da face
             antes de executar a classificação.
@@ -224,7 +224,7 @@ function App() {
                     </h2>
                   </div>
                   <div className="confidence">
-                    <span>Confiança</span>
+                    <span>Escore da classe prevista</span>
                     <strong>{(result.prediction.confidence * 100).toFixed(2)}%</strong>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ function App() {
                 </div>
 
                 <div className="probabilities">
-                  <h3>Probabilidades</h3>
+                  <h3>Escores do modelo</h3>
                   {Object.entries(result.prediction.probabilities).map(([label, value]) => (
                     <div className="probability-row" key={label}>
                       <span>{label}</span>
@@ -260,6 +260,13 @@ function App() {
                     </div>
                   ))}
                 </div>
+                <p className="result-note">
+                  Limiar de decisão para a classe sintética:{" "}
+                  {(result.prediction.decision_threshold * 100).toFixed(2)}%.
+                  Os escores não são probabilidades calibradas.
+                  A classificação não comprova a autenticidade da imagem
+                  e deve ser utilizada como apoio à análise humana.
+                </p>
               </div>
             )}
           </section>

@@ -1,6 +1,10 @@
 import json
 import math
+import os
+import platform
 import statistics
+import sys
+from importlib.metadata import PackageNotFoundError, version
 import time
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -18,7 +22,11 @@ def percentile(values, fraction):
 
 
 def analyze(url, api_key, image_path, timeout):
-    content = image_path.read_bytes()
+    started = time.perf_counter()
+    try:
+        content = image_path.read_bytes()
+    except OSError as error:
+        return time.perf_counter() - started, False, str(error)
     boundary = "synthetic-face-benchmark-boundary"
     body = b"\r\n".join([
         f"--{boundary}".encode(),
@@ -28,31 +36,56 @@ def analyze(url, api_key, image_path, timeout):
     request = Request(url.rstrip("/") + "/api/v1/images/analyze", data=body, method="POST", headers={
         "X-API-Key": api_key, "Content-Type": f"multipart/form-data; boundary={boundary}",
     })
-    started = time.perf_counter()
     try:
         with urlopen(request, timeout=timeout) as response:
             response.read()
             return time.perf_counter() - started, 200 <= response.status < 300, None
     except HTTPError as error:
-        response_body = error.read().decode("utf-8", errors="replace")
+        error.close()
         return (
             time.perf_counter() - started,
             False,
-            f"HTTP {error.code}: {response_body}",
+            f"HTTP {error.code}",
         )
     except (URLError, TimeoutError, OSError) as error:
         return time.perf_counter() - started, False, str(error)
 
 
-def report(latencies, failures, elapsed):
+def report(latencies, failures, elapsed, *, requests, concurrency, url):
+    """Report latency over every completed request, including failed calls."""
+    package_versions = {}
+    for package in ("Flask", "torch", "torchvision", "opencv-python-headless", "numpy", "Pillow"):
+        try:
+            package_versions[package] = version(package)
+        except PackageNotFoundError:
+            package_versions[package] = "not-installed"
+    accelerator = "unavailable"
+    try:
+        import torch
+        accelerator = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
+    except Exception:
+        pass
     payload = {
-        "successes": len(latencies), "failures": len(failures),
+        "environment": {
+            "python": sys.version.split()[0],
+            "platform": platform.platform(),
+            "processor": platform.processor() or platform.machine(),
+            "cpu_count": os.cpu_count(),
+            "accelerator": accelerator,
+            "measurement_host_note": "Client host; record API server hardware separately when remote.",
+            "package_versions": package_versions,
+            "url": url,
+        },
+        "requests": requests,
+        "concurrency": concurrency,
+        "successes": requests - len(failures), "failures": len(failures),
         "minimum_seconds": min(latencies) if latencies else 0.0,
         "maximum_seconds": max(latencies) if latencies else 0.0,
         "mean_seconds": statistics.mean(latencies) if latencies else 0.0,
         "median_seconds": statistics.median(latencies) if latencies else 0.0,
         "p95_seconds": percentile(latencies, 0.95),
         "throughput_requests_per_second": len(latencies) / elapsed if elapsed else 0.0,
+        "throughput_successes_per_second": (requests - len(failures)) / elapsed if elapsed else 0.0,
     }
     print(json.dumps(payload, indent=2))
     if failures:

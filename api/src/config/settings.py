@@ -26,23 +26,15 @@ class Settings:
 
     MIN_IMAGE_WIDTH = int(os.getenv("MIN_IMAGE_WIDTH", "224"))
     MIN_IMAGE_HEIGHT = int(os.getenv("MIN_IMAGE_HEIGHT", "224"))
-    MIN_FACE_SIZE = int(os.getenv("MIN_FACE_SIZE", "80"))
 
-    FACE_DETECTOR_MODEL_PATH = path_from_env(
-        "FACE_DETECTOR_MODEL_PATH",
-        MODELS_DIR / "face_detection_yunet_2023mar.onnx",
-    )
+    FACE_DETECTOR_MODEL_PATH = path_from_env("FACE_DETECTOR_MODEL_PATH", MODELS_DIR / "face_detection_yunet_2023mar.onnx" )
 
     BLUR_THRESHOLD = float(os.getenv("BLUR_THRESHOLD", "30.0"))
     CONTRAST_THRESHOLD = float(os.getenv("CONTRAST_THRESHOLD", "25.0"))
 
-    MODEL_WEIGHTS_PATH = path_from_env(
-        "MODEL_WEIGHTS_PATH",
-        MODELS_DIR / "resnet34_224.pt",
-    )
-
-    # Fallback para checkpoints antigos.
+    MODEL_WEIGHTS_PATH = path_from_env("MODEL_WEIGHTS_PATH", MODELS_DIR / "resnet34_224.pt")
     MODEL_ARCHITECTURE = os.getenv("MODEL_ARCHITECTURE", "resnet34")
+
     MODEL_INPUT_SIZE = int(os.getenv("MODEL_INPUT_SIZE", "224"))
     MODEL_CLASS_NAMES = [
         name.strip()
