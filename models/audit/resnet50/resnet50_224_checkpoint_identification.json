@@ -1,0 +1,7 @@
+{
+  "checkpoint_path": "/home/guilhermemathiasreis/Documents/synthetic-face-detection/models/resnet50_224.pt",
+  "checkpoint_sha256": "2b32aea23b277ff89e10cfa858d60819f7960ed9502a05dde3f885e44a92ac59",
+  "git_commit": "5955f66af28b58999d282326e7f3513739b2d672",
+  "working_tree_modified": true,
+  "environment_record": "/home/guilhermemathiasreis/Documents/synthetic-face-detection/models/audit/resnet50_224_training_environment.json"
+}

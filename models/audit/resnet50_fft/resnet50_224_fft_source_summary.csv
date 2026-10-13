@@ -1,0 +1,3 @@
+class_name,source,images,accuracy,probability_fake_mean
+fake,sd_21,2000,0.946,0.86820334
+real,celebhq,1990,0.9512562814070352,0.048770476

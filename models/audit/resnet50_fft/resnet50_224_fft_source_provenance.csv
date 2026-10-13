@@ -1,0 +1,7 @@
+class_name,source,raw_images,valid_images,rejected_images,train,validation,test,dataset_origin,dataset_version,source_url,license_or_terms
+fake,sd_14,2000,2000,0,1612,388,0,,,,
+fake,sd_21,2000,2000,0,0,0,2000,,,,
+fake,stylegan2,2000,1999,1,1581,418,0,,,,
+fake,stylegan3,2000,1999,1,1605,394,0,,,,
+real,celebhq,2000,1990,10,0,0,1990,,,,
+real,ffhq,6000,5972,28,4778,1194,0,,,,

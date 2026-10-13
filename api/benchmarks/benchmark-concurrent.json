@@ -1,0 +1,31 @@
+{
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.11-76070011-generic-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "cpu_count": 12,
+    "accelerator": "NVIDIA GeForce GTX 1650",
+    "measurement_host_note": "Client host; record API server hardware separately when remote.",
+    "package_versions": {
+      "Flask": "3.1.3",
+      "torch": "2.13.0",
+      "torchvision": "0.28.0",
+      "opencv-python-headless": "4.14.0.94",
+      "numpy": "2.5.2",
+      "Pillow": "12.3.0"
+    },
+    "url": "http://127.0.0.1:5000"
+  },
+  "requests": 50,
+  "concurrency": 10,
+  "successes": 50,
+  "failures": 0,
+  "minimum_seconds": 0.06263766899999723,
+  "maximum_seconds": 0.3193224600000093,
+  "mean_seconds": 0.14005400646000082,
+  "median_seconds": 0.11444416049999973,
+  "p95_seconds": 0.2770929218500008,
+  "throughput_requests_per_second": 69.08349269409773,
+  "throughput_successes_per_second": 69.08349269409773,
+  "failure_samples": []
+}

@@ -1,0 +1,47 @@
+{
+  "started_at_utc": "2026-10-13T12:33:31.374806+00:00",
+  "duration_seconds": 7140.04,
+  "epochs_executed": 30,
+  "best_epoch": 28,
+  "checkpoint_selection": "menor perda de validação",
+  "system": "Linux-7.0.11-76070011-generic-x86_64-with-glibc2.39",
+  "cpu": "x86_64",
+  "cpu_logical_count": 12,
+  "ram_gb": 15.5,
+  "gpu": "NVIDIA GeForce GTX 1650",
+  "gpu_memory_gb": 3.62,
+  "python": "3.12.3",
+  "pytorch": "2.11.0+cu130",
+  "torchvision": "0.26.0",
+  "opencv": "5.0.0",
+  "pillow": "12.2.0",
+  "scikit_learn": "1.8.0",
+  "seed": 42,
+  "image_size": 224,
+  "batch_size": 32,
+  "num_workers": 0,
+  "max_epochs": 30,
+  "head_epochs": 3,
+  "early_stopping_patience": 7,
+  "lr_head": 0.0002,
+  "lr_backbone": 1e-05,
+  "weight_decay": 0.0001,
+  "label_smoothing": 0.02,
+  "gradient_clip_norm": 1.0,
+  "source_balanced_sampler": true,
+  "jpeg_augmentation_probability": 0.25,
+  "yunet_score_threshold": 0.9,
+  "face_margin": 0.15,
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  }
+}

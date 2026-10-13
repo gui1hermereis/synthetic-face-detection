@@ -86,10 +86,9 @@ def report(latencies, failures, elapsed, *, requests, concurrency, url):
         "p95_seconds": percentile(latencies, 0.95),
         "throughput_requests_per_second": len(latencies) / elapsed if elapsed else 0.0,
         "throughput_successes_per_second": (requests - len(failures)) / elapsed if elapsed else 0.0,
+        "failure_samples": failures[:5],
     }
     print(json.dumps(payload, indent=2))
-    if failures:
-        print("failure_samples:", failures[:5])
 
 def validate_benchmark_arguments(parser, image_path, requests, concurrency=None):
     if not image_path.is_file():
