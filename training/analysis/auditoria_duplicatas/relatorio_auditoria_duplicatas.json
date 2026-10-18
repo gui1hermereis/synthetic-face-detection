@@ -1,0 +1,39 @@
+{
+  "gerado_em_utc": "2026-10-18T13:26:03.790263+00:00",
+  "cenario": "source_holdout",
+  "seed": 42,
+  "manifesto_particoes": "models/audit/resnet34/resnet34_224_source_holdout_seed42_splits.csv",
+  "manifesto_sha256": "models/audit/resnet34/resnet34_224_dataset_manifest.csv",
+  "imagens_originais": 16000,
+  "crops_validos": 15960,
+  "particoes": {
+    "test": 3990,
+    "train": 9576,
+    "validation": 2394
+  },
+  "crops_com_hash_sha256_divergente_do_treinamento": 0,
+  "arquivos_originais_com_sha256_repetido": 0,
+  "crops_com_sha256_repetido": 0,
+  "metodo_triagem": "dHash 64 bits, distância de Hamming <= 5, faixa de busca do treinamento",
+  "metodo_ordenacao_auxiliar": "pHash 64 bits apenas para ordenação/inspeção",
+  "pares_candidatos_total": 2374,
+  "pares_candidatos_entre_particoes": 1224,
+  "pares_prioritarios_entre_particoes_dhash_0_a_2": 18,
+  "pares_revisados": 0,
+  "pares_pendentes": 1224,
+  "pares_confirmados_mesma_imagem_por_revisao": 0,
+  "pares_mesma_pessoa_imagens_diferentes_por_revisao": 0,
+  "pares_inconclusivos": 0,
+  "decisoes_registradas": {
+    "pendente": 1224
+  },
+  "metadados_de_identidade": {
+    "linhas": 15960,
+    "ids_de_imagem_original_informados": 0,
+    "ids_de_identidade_informados": 0,
+    "grupos_imagem_original_entre_particoes": 0,
+    "grupos_identidade_entre_particoes": 0
+  },
+  "status": "REVISÃO HUMANA PENDENTE",
+  "observacao": "dHash/pHash sinalizam semelhança, não provam identidade; a revisão humana cobre os candidatos gerados pela heurística, não todas as possíveis repetições."
+}
