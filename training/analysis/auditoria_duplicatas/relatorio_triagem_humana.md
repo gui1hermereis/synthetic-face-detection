@@ -1,7 +1,7 @@
 # Complemento — revisão humana direcionada da auditoria perceptual
 
 **Base:** `training/analysis/auditoria_duplicatas/revisao_pares_entre_particoes.csv` e relatórios de auditoria já existentes.  
-**Gerado em (UTC):** 2026-10-19T18:53:01.938994+00:00.
+**Gerado em (UTC):** 2026-10-19T18:57:34.716789+00:00.
 
 ## Histórico preservado
 
@@ -13,11 +13,11 @@
 ## Procedimento e cobertura humana
 
 - Prioritários dHash 0–2 com decisão registrada: **18/18**.
-- Complementares selecionados: **12**, dos quais **0** com decisão registrada.
-- Total entre partições com decisão: **18/1.224**.
-- Pares revisados envolvendo teste: **15**.
-- Pares pendentes de revisão: **1.206**.
-- Classificados como imagens distintas: **18**.
+- Complementares selecionados: **12**, dos quais **12** com decisão registrada.
+- Total entre partições com decisão: **30/1.224**.
+- Pares revisados envolvendo teste: **27**.
+- Pares pendentes de revisão: **1.194**.
+- Classificados como imagens distintas: **30**.
 - Confirmados como mesma imagem: **0**.
 - Marcados como mesma pessoa em imagens diferentes: **0**.
 - Inconclusivos: **0**.
