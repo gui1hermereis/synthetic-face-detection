@@ -1,7 +1,7 @@
 class_name,source,raw_images,valid_images,rejected_images,train,validation,test,dataset_origin,dataset_version,source_url,license_or_terms
-fake,sd_14,2000,2000,0,1612,388,0,selfishgene - SFHQ Part 2,,https://www.kaggle.com/datasets/selfishgene/synthetic-faces-high-quality-sfhq-part-2,
-fake,sd_21,2000,2000,0,0,0,2000,selfishgene - SFHQ Part 4,,https://www.kaggle.com/datasets/selfishgene/synthetic-faces-high-quality-sfhq-part-4,
-fake,stylegan2,2000,1999,1,1581,418,0,almightyj - Person Face Dataset (thispersondoesnotexist),,https://www.kaggle.com/datasets/almightyj/person-face-dataset-thispersondoesnotexist?select=thispersondoesnotexist.10k,
-fake,stylegan3,2000,1999,1,1605,394,0,Mohammad Hafezi - StyleGAN3 Synthetic Face Image Dataset (1024x1024),v1,https://zenodo.org/records/18177207,
-real,celebhq,2000,1990,10,0,0,1990,lamsimon - CelebA-HQ,,https://www.kaggle.com/datasets/lamsimon/celebahq,
-real,ffhq,6000,5972,28,4778,1194,0,rahulbhalley - FFHQ 1024x1024,,https://www.kaggle.com/datasets/rahulbhalley/ffhq-1024x1024,
+fake,sd_14,2000,2000,0,1612,388,0,selfishgene - SFHQ Part 2,v4,https://www.kaggle.com/datasets/selfishgene/synthetic-faces-high-quality-sfhq-part-2,CC0 1.0
+fake,sd_21,2000,2000,0,0,0,2000,selfishgene - SFHQ Part 4,v4,https://www.kaggle.com/datasets/selfishgene/synthetic-faces-high-quality-sfhq-part-4,CC0 1.0
+fake,stylegan2,2000,1999,1,1581,418,0,almightyj - Person Face Dataset (thispersondoesnotexist),v1,https://www.kaggle.com/datasets/almightyj/person-face-dataset-thispersondoesnotexist?select=thispersondoesnotexist.10k,CC0 1.0
+fake,stylegan3,2000,1999,1,1605,394,0,Mohammad Hafezi - StyleGAN3 Synthetic Face Image Dataset (1024x1024),v1,https://zenodo.org/records/18177207,CC BY-NC 4.0
+real,celebhq,2000,1990,10,0,0,1990,lamsimon - CelebA-HQ,v1,https://www.kaggle.com/datasets/lamsimon/celebahq,Unknown
+real,ffhq,6000,5972,28,4778,1194,0,rahulbhalley - FFHQ 1024x1024,v1,https://www.kaggle.com/datasets/rahulbhalley/ffhq-1024x1024,Unknown
